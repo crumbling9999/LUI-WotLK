@@ -601,7 +601,7 @@ end
 function module:LibSharedMedia_Registered(mediaType, key)
 	if mediaType == "font" and key == db.General.Font.Font then
 		for i, name in ipairs(CHAT_FRAMES) do
-			_G[name]:SetFont(Media:Fetch("font", db.General.Font.Font), db.General.Font.Size, db.General.Font.Flag)
+			_G[name]:SetFont(Media:Fetch("font", db.General.Font.Font), db.General.Font.Size, "")
 		end
 	end
 end
@@ -620,7 +620,7 @@ function module:FCF_OpenTemporaryWindow()
 		configureTab(_G[frame:GetName().."Tab"], true)
 	end
 
-	frame:SetFont(Media:Fetch("font", db.General.Font.Font), db.General.Font.Size, db.General.Font.Flag)
+	frame:SetFont(Media:Fetch("font", db.General.Font.Font), db.General.Font.Size, "")
 
 	if db.General.ShortChannelNames and not self:IsHooked(frame, "AddMessage") then
 		self:RawHook(frame, "AddMessage", true)

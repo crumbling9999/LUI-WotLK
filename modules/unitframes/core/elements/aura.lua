@@ -224,7 +224,8 @@ local updateIcon = function(unit, icons, index, offset, filter, isDebuff, visibl
 			end
 
 			icon.icon:SetTexture(texture)
-			icon.count:SetText((count > 1 and count))
+--			icon.count:SetText((count > 1 and count))
+			icon.count:SetText(count)
 
 			local size = icons.size or 16
 			icon:SetSize(size, size)
@@ -350,7 +351,7 @@ local UpdateAuras = function(self, event, unit)
 			icon.icon:SetTexture()
 			icon.overlay:Hide()
 			icon.stealable:Hide()
-			icon.count:SetText()
+			icon.count:SetText("")
 			icon:Show()
 
 			--[[ :PostUpdateGapIcon(unit, icon, visibleBuffs)

@@ -264,12 +264,8 @@ function module:SlotUpdate(item)
 		local name, _, itemQuality, _, _, iType, _, _, _, _, _, classID = GetItemInfo(clink)
 		item.name, item.itemQuality = name, itemQuality
 		-- color slot according to item quality
-		if db.Bags.Rarity and not item.frame.lock and itemQuality > 1 then
-			local r, g, b, hex = GetItemQualityColor(itemQuality)
-			item.frame:SetBackdropBorderColor(r,g,b)
-		-- color slot according to quest item.
-		elseif db.Bags.ShowQuest and not item.frame.lock and classID == 12 then
-			item.frame:SetBackdropBorderColor(1,1,0)
+		if db.Bags.ItemQuality and not item.frame.lock and itemQuality > 1 then
+			item.frame:SetBackdropBorderColor(GetItemQualityColor(itemQuality))
 		end
 	else
 		item.name, item.itemQuality = nil, nil
@@ -889,7 +885,7 @@ function module:Layout(bagType)
 
 				end
 
-				LUI:StyleButton(item.frame)
+				--LUI:StyleButton(item.frame)
 				module:SlotUpdate(item)
 
 				local iconTex = _G[item.frame:GetName() .. "IconTexture"]
@@ -1430,7 +1426,7 @@ function module:PrepareSort(frame)
 
 	for _, bag in pairs(self.sortBags) do
 		for j = 1, GetContainerNumSlots(bag.bagId) do
-			local itemId = C_Container.GetContainerItemID(bag.bagId, j);
+			local itemId = GetContainerItemID(bag.bagId, j);
 
 			if itemId then
 				local _, count, locked = GetContainerItemInfo(bag.bagId, j);

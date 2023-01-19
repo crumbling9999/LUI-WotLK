@@ -28,6 +28,8 @@
 	<Script file="addons\omen.lua"/>
 	<Script file="addons\recount.lua"/>
 	<Script file="addons\details.lua"/>
+	<Script file="addons\forte.lua"/>
+	
 
 	<!-- Extended Modules -->
 	<Include file="modules\auras\auras.xml"/>

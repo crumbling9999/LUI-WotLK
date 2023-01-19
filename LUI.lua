@@ -263,8 +263,9 @@ function LUI:StyleButton(b, checked)
 	local flash           = _G[name.."Flash"]
 	local normaltexture   = _G[name.."NormalTexture"]
 	local icontexture     = _G[name.."IconTexture"]
-
-	local hover = b:CreateTexture("frame", nil, self) -- hover
+	--print(self)
+	--local hover = b:CreateTexture("frame", nil, self, _)
+	local hover = b:CreateTexture("frame", nil)
 	hover:SetColorTexture(1,1,1,0.2)
 	hover:SetHeight(button:GetHeight())
 	hover:SetWidth(button:GetWidth())
@@ -272,7 +273,8 @@ function LUI:StyleButton(b, checked)
 	hover:SetPoint("BOTTOMRIGHT",button,-2,2)
 	button:SetHighlightTexture(hover)
 
-	local pushed = b:CreateTexture("frame", nil, self) -- pushed
+	--local pushed = b:CreateTexture("frame", nil, self, _) -- pushed
+	local pushed = b:CreateTexture("frame", nil) -- pushed
 	pushed:SetColorTexture(0.9,0.8,0.1,0.3)
 	pushed:SetHeight(button:GetHeight())
 	pushed:SetWidth(button:GetWidth())
@@ -284,7 +286,8 @@ function LUI:StyleButton(b, checked)
 	count:SetFont(Media:Fetch("font", (Infotext and Infotext.db.profile.FPS.Font or "vibroceb")), (Infotext and Infotext.db.profile.FPS.FontSize or 12), "OUTLINE")
 
 	if checked then
-		local checked = b:CreateTexture("frame", nil, self) -- checked
+		--local checked = b:CreateTexture("frame", nil, self, _) -- checked
+		local checked = b:CreateTexture("frame", nil) -- checked
 		checked:SetColorTexture(0,1,0,0.3)
 		checked:SetHeight(button:GetHeight())
 		checked:SetWidth(button:GetWidth())
@@ -497,7 +500,10 @@ function LUI:Update()
 			LUI.db.global.luiconfig[ProfileName].Versions.vudho = nil
 			LUI:InstallVudho()
 		end
-
+		if IsAddOnLoaded("Forte_Timer") then
+			LUI.db.global.luiconfig[ProfileName].Versions.forte = nil
+			LUI:InstallForte()
+		end
 		LUI.db.global.luiconfig[ProfileName].Versions.lui = LUI.Versions.lui
 		ReloadUI()
 	end)
@@ -573,6 +579,7 @@ function LUI:Configure()
 		LUI:InstallOmen()
 		LUI:InstallBartender()
 		LUI:InstallDetails()
+		LUI:InstallForte()
 		-- LUI:InstallVudho()
 
 		LUI.db.global.luiconfig[ProfileName].Versions.lui = LUI.Versions.lui
@@ -1187,6 +1194,18 @@ local function getOptions()
 									disabled = function() return not IsAddOnLoaded("Bartender4") end,
 									hidden = function() return not IsAddOnLoaded("Bartender4") end,
 								},
+								ResetForte = {
+									order = 2,
+									type = "execute",
+									name = "Restore ForteXorcist",
+									func = function()
+										LUI.db.global.luiconfig[ProfileName].Versions.forte = nil
+										LUI:InstallForte()
+										StaticPopup_Show("RELOAD_UI")
+									end,
+									disabled = function() return not IsAddOnLoaded("Forte_Timer") end,
+									hidden = function() return not IsAddOnLoaded("Forte_Timer") end,
+								},								
 								ResetGrid = {
 									order = 2,
 									type = "execute",
