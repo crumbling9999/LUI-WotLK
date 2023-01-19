@@ -28,7 +28,7 @@ local widgetLists = AceGUIWidgetLSMlists
 local db, dbd
 local GetBags = {
 	["Bags"] = {0, 1, 2, 3, 4},
-	["Bank"] = {-1, 5, 6, 7, 8, 9, 10, 11},
+	["Bank"] = {-1, 6, 7, 8, 9, 10, 11, 12},
 }
 local isCreated = {}
 
@@ -202,8 +202,8 @@ function module:InitSelect(bag)
 end
 
 function module:SlotUpdate(item)
-
-	local texture, count, locked, quality = GetContainerItemInfo(item.bag, item.slot)
+    local texture, count, locked, quality = GetContainerItemInfo(item.bag, item.slot)
+	
 	local clink = GetContainerItemLink(item.bag, item.slot)
 	local color = db.Colors.Border
 
@@ -219,9 +219,9 @@ function module:SlotUpdate(item)
 
 	end
 
-	if item.Cooldown then
+	if item.cooldown then
 		local cd_start, cd_finish, cd_enable = GetContainerItemCooldown(item.bag, item.slot)
-		CooldownFrame_Set(item.Cooldown, cd_start, cd_finish, cd_enable)
+		CooldownFrame_Set(item.cooldown, cd_start, cd_finish, cd_enable)
 	end
 
 	-- New item code from Blizzard's ContainerFrame.lua
@@ -229,6 +229,7 @@ function module:SlotUpdate(item)
 	local battlePayTexture = item.frame.BattlepayItemTexture
 	local flashAnim = item.frame.flashAnim
 	local newItemAnim = item.frame.newitemglowAnim
+	-- Not all item slots have a newItemTexture
 	if newItemTexture then
 		if db.Bags.ShowNew and C_NewItems.IsNewItem(item.bag, item.slot) then
 			if IsBattlePayItem(item.bag, item.slot) then
@@ -259,25 +260,24 @@ function module:SlotUpdate(item)
 		battlePayTexture:SetSize(item.frame:GetSize())
 		newItemTexture:SetSize(item.frame:GetSize())
 	end
-
+	
 	if (clink) then
 		local name, _, itemQuality, _, _, iType, _, _, _, _, _, classID = GetItemInfo(clink)
 		item.name, item.itemQuality = name, itemQuality
 		-- color slot according to item quality
 		if db.Bags.Rarity and not item.frame.lock and itemQuality > 1 then
-			local r, g, b, hex = GetItemQualityColor(itemQuality)
-			item.frame:SetBackdropBorderColor(r,g,b)
+			--item.frame:SetBackdropBorderColor(GetItemQualityColor(itemQuality))
 		-- color slot according to quest item.
 		elseif db.Bags.ShowQuest and not item.frame.lock and classID == 12 then
-			item.frame:SetBackdropBorderColor(1,1,0)
+			--item.frame:SetBackdropBorderColor(1,1,0)
 		end
 	else
 		item.name, item.itemQuality = nil, nil
 	end
 
-	SetItemButtonTexture(item.frame, texture)
-	SetItemButtonCount(item.frame, count)
-	SetItemButtonDesaturated(item.frame, locked, 0.5, 0.5, 0.5)
+	_G.SetItemButtonTexture(item.frame, texture)
+	_G.SetItemButtonCount(item.frame, count)
+	_G.SetItemButtonDesaturated(item.frame, locked, 0.5, 0.5, 0.5)
 	if db.Bags.ShowOverlay and itemLink then
 		SetItemButtonOverlay(item.frame, itemLink, itemQuality, isBound)
 	else
@@ -379,7 +379,6 @@ function module:SlotNew(bag, slot)
 			b = tonumber(b)
 			s = tonumber(s)
 
-			--print (b .. " " .. s)
 			if b == bag and s == slot then
 				f = i
 				break
@@ -387,7 +386,6 @@ function module:SlotNew(bag, slot)
 		end
 
 		if f ~= -1 then
-			--print("found it")
 			ret.frame = trashButton[f]
 			table.remove(trashButton, f)
 		end
@@ -876,7 +874,7 @@ function module:Layout(bagType)
 					item.frame:SetPushedTexture("")
 					item.frame:SetNormalTexture("")
 					item.frame:Show()
-
+				
 					item.frame:SetBackdrop( {
 						bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 						edgeFile = borderTex,
@@ -888,7 +886,7 @@ function module:Layout(bagType)
 					item.frame:SetBackdropBorderColor(unpack(border_color))
 
 				end
-
+				
 				LUI:StyleButton(item.frame)
 				module:SlotUpdate(item)
 
@@ -902,7 +900,6 @@ function module:Layout(bagType)
 
 				idx = idx + 1
 			end
-
 		end
 
 	end
@@ -1430,7 +1427,7 @@ function module:PrepareSort(frame)
 
 	for _, bag in pairs(self.sortBags) do
 		for j = 1, GetContainerNumSlots(bag.bagId) do
-			local itemId = C_Container.GetContainerItemID(bag.bagId, j);
+			local itemId = GetContainerItemID(bag.bagId, j);
 
 			if itemId then
 				local _, count, locked = GetContainerItemInfo(bag.bagId, j);
